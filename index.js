@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
-//const Carousel = import('./models/carousel.mjs');
 const Carousel = require('./models/carousel');
+require('dotenv').config();
 
 const app = express();
 let indexHTML = "";
@@ -23,7 +23,7 @@ app.use(express.json());
 app.get('/', (request, response) => response.send(indexHTML));
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
 
-const PORT = 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}.`);
 });
