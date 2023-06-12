@@ -1,8 +1,10 @@
 const express = require('express');
 const fs = require('fs').promises;
-const app = express();
+//const Carousel = import('./models/carousel.mjs');
+const Carousel = require('./models/carousel');
 
-let indexHTML;
+const app = express();
+let indexHTML = "";
 
 const readIndexHTML = async (filePath) => {
   try {
@@ -18,7 +20,8 @@ readIndexHTML('./index.html');
 
 app.use(express.json());
 
-app.get('/', (req, res) => res.send(indexHTML));
+app.get('/', (request, response) => response.send(indexHTML));
+app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
 
 const PORT = 3001;
 app.listen(PORT, () => {
