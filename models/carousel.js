@@ -11,7 +11,8 @@ const cert = process.env.X509_CERT;
     sslValidate: true,
     tlsCertificateKeyFile: cert,
     authMechanism: 'MONGODB-X509',
-    authSource: '$external');
+    authSource: '$external'
+  });
 })();
 
 const carouselSchema = new mongoose.Schema({
@@ -21,5 +22,13 @@ const carouselSchema = new mongoose.Schema({
   link: String,
   image: String
 });
+
+carouselSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  }
+})
 
 module.exports = mongoose.model('Carousel', carouselSchema);
