@@ -1,26 +1,12 @@
 const express = require('express');
-const fs = require('fs').promises;
 const Carousel = require('./models/carousel');
 require('dotenv').config();
 
 const app = express();
-let indexHTML = "";
 
-const readIndexHTML = async (filePath) => {
-  try {
-    indexHTML = (await fs.readFile(filePath)).toString();
-  } catch (e) {
-    console.error('Got an error while trying to read index.html: ', e);
-    indexHTML = `<!DOCTYPE html><html><body><h1>Couldn't find ${filePath}.
-    <br>Reason: ${e.toString()}</h1></body></html>`;
-  }
-}
+app.use(express.json(), express.static('public'));
 
-readIndexHTML('./index.html');
-
-app.use(express.json());
-
-app.get('/', (request, response) => response.send(indexHTML));
+app.get('/', (request, response) => response.sendFile('index.html', { root: path.join(__dirname, 'public') }));
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
 
 const PORT = process.env.PORT;
