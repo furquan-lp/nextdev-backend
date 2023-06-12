@@ -1,2 +1,3 @@
 # nextdev-backend
-Node.js/Express backend for nextdev.in
+
+This is the Node.js + Express + Mongoose backend for my website at https://nextdev.in/
