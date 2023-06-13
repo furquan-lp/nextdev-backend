@@ -11,6 +11,11 @@ app.get('/', (request, response) => response.sendFile('index.html', { root: path
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
 app.get('/version', (request, response) => response.json({ version: backendVersion }));
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+}
+app.use(unknownEndpoint);
+
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}.`);
