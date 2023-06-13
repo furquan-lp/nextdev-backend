@@ -1,6 +1,6 @@
 {
   "name": "nextdev-backend",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "Node/Express backend for NEXTDEV.in",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/furquan-lp/nextdev-backend/issues"
   },
-  "homepage": "https://github.com/furquan-lp/nextdev-backend#readme",
+  "homepage": "https://api.nextdev.in/",
   "dependencies": {
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
