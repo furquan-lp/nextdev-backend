@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const Carousel = require('./models/carousel');
 require('dotenv').config();
 const backendVersion = require('./package.json').version;
@@ -6,6 +7,7 @@ const backendVersion = require('./package.json').version;
 const app = express();
 
 app.use(express.json(), express.static('public'));
+app.use(cors());
 
 app.get('/', (request, response) => response.sendFile('index.html', { root: path.join(__dirname, 'public') }));
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
