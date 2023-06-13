@@ -12,7 +12,7 @@ const cert = process.env.X509_CERT;
     tlsCertificateKeyFile: cert,
     authMechanism: 'MONGODB-X509',
     authSource: '$external'
-  });
+  }).catch(e => console.error('Error connecting to the Atlas backend.', e));
 })();
 
 const carouselSchema = new mongoose.Schema({
