@@ -20,6 +20,7 @@ const carouselSchema = new mongoose.Schema({
   tags: [{ type: String }],
   text: String,
   link: String,
+  button: String,
   image: String
 });
 
