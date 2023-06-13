@@ -13,7 +13,7 @@ app.get('/version', (request, response) => response.json({ version: backendVersi
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' });
-}
+};
 app.use(unknownEndpoint);
 
 const PORT = process.env.PORT;
