@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const Carousel = require('./models/carousel');
+const Portfolio = require('./models/portfolio');
 require('dotenv').config();
 const backendVersion = require('./package.json').version;
 
