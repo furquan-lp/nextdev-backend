@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors')
+const cors = require('cors');
 const Carousel = require('./models/carousel');
 const Portfolio = require('./models/portfolio');
 require('dotenv').config();

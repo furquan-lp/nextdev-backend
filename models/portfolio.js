@@ -26,7 +26,7 @@ const portfolioSchema = new mongoose.Schema({
   }],
   repo: String,
   site: String
-})
+});
 
 portfolioSchema.set('toJSON', {
   transform: (document, returnedObject) => {
