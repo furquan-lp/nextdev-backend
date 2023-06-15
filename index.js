@@ -12,6 +12,7 @@ app.use(cors());
 
 app.get('/', (request, response) => response.sendFile('index.html', { root: path.join(__dirname, 'public') }));
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
+app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
 app.get('/version', (request, response) => response.json({ version: backendVersion }));
 
 const unknownEndpoint = (request, response) => {
