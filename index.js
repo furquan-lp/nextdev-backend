@@ -5,12 +5,16 @@ const Portfolio = require('./models/portfolio');
 require('dotenv').config();
 const backendVersion = require('./package.json').version;
 
+const cacheTime = 4 * (1000 * 3600);
 const app = express();
 
 app.use(express.json(), express.static('public'));
 app.use(cors());
 
-app.get('/', (request, response) => response.sendFile('index.html', { root: path.join(__dirname, 'public') }));
+app.get('/', (request, response) => response.sendFile('index.html', {
+  root: path.join(__dirname, 'public'),
+  maxAge: cacheTime
+}));
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
 app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
 app.get('/version', (request, response) => response.json({ version: backendVersion }));
