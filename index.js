@@ -1,12 +1,30 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const cors = require('cors');
 const Carousel = require('./models/carousel');
 const Portfolio = require('./models/portfolio');
 require('dotenv').config();
 const backendVersion = require('./package.json').version;
 
-const cacheTime = 4 * (1000 * 3600);
 const app = express();
+const cacheTime = 4 * (1000 * 3600);
+
+console.log('creating transporter for ', process.env.EMAIL_USER)
+
+let transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_SMTP,
+  port: process.env.EMAIL_SMTP_PORT,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.err(error);
+  }
+});
 
 app.use(express.json(), express.static('public'));
 app.use(cors());
