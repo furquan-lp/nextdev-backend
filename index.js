@@ -9,8 +9,6 @@ const backendVersion = require('./package.json').version;
 const app = express();
 const cacheTime = 4 * (1000 * 3600);
 
-console.log('creating transporter for ', process.env.EMAIL_USER)
-
 let transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SMTP,
   port: process.env.EMAIL_SMTP_PORT,
@@ -36,6 +34,22 @@ app.get('/', (request, response) => response.sendFile('index.html', {
 app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
 app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
 app.get('/version', (request, response) => response.json({ version: backendVersion }));
+
+app.post('/mail/send', (request, response) => {
+  let name = request.body.name,
+    email = request.body.email,
+    message = request.body.message,
+    subject = request.body.subject,
+    content = `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    mail = {
+      from: name,
+      to: process.env.EMAIL_USER,
+      subject: `NEXTDEV Message: ${subject}`,
+      text: content
+    };
+  transporter.sendMail(mail, (err, data) =>
+    err ? response.status(400).json({ status: 'fail', error: err }) : response.json({ status: 'success' }));
+});
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' });
