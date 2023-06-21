@@ -44,7 +44,7 @@ app.post('/mail/send', (request, response) => {
     mail = {
       from: name,
       to: process.env.EMAIL_USER,
-      subject: `NEXTDEV Message: ${subject}`,
+      subject: `NEXTDEV <${name}>: ${subject}`,
       text: content
     };
   transporter.sendMail(mail, (err, data) =>
