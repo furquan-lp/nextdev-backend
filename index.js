@@ -47,8 +47,12 @@ app.post('/mail/send', (request, response) => {
       subject: `NEXTDEV <${name}>: ${subject}`,
       text: content
     };
-  transporter.sendMail(mail, (err, data) =>
-    err ? response.status(400).json({ status: 'fail', error: err }) : response.json({ status: 'success' }));
+  if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(String(email).toLowerCase())) {
+    transporter.sendMail(mail, (err, data) =>
+      err ? response.status(400).json({ status: 'fail', error: err }) : response.json({ status: 'success' }));
+  } else {
+    response.status(400).json({ status: 'fail', error: `malformed email: ${email}` });
+  }
 });
 
 const unknownEndpoint = (request, response) => {
