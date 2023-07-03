@@ -1,5 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const redis = require('redis');
+const promisify = require('util').promisify;
 const cors = require('cors');
 const Carousel = require('./models/carousel');
 const Portfolio = require('./models/portfolio');
@@ -8,6 +10,17 @@ const backendVersion = require('./package.json').version;
 
 const app = express();
 const cacheTime = 4 * (1000 * 3600);
+
+const client = redis.createClient({
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT
+  }
+});
+
+const getAsync = promisify(client.get).bind(client);
+const setAsync = promisify(client.set).bind(client);
 
 let transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SMTP,
