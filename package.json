@@ -1,6 +1,6 @@
 {
   "name": "nextdev-backend",
-  "version": "0.9.6",
+  "version": "1.0.3",
   "description": "Node/Express backend for NEXTDEV.in",
   "main": "index.js",
   "scripts": {
