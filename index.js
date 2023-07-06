@@ -27,7 +27,6 @@ const redisClient = redis.createClient({
 
 const cacheData = (key) =>
   async (request, response, next) => {
-    let results = {};
     try {
       const cacheResults = await redisClient.get(key);
       if (cacheResults) {
@@ -103,7 +102,7 @@ app.get('/version', cacheData(process.env.REDIS_VERSION_KEY), async (request, re
     });
     response.json({ version: backendVersion });
   } catch (error) {
-    console.error('Error while fetching /version: ', version);
+    console.error('Error while fetching /version: ', error);
     response.status(404).send('version unavailable.');
   }
 });
