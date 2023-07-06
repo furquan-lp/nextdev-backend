@@ -47,7 +47,25 @@ app.get('/', (request, response) => response.sendFile('index.html', {
   root: path.join(__dirname, 'public'),
   maxAge: cacheTime
 }));
-app.get('/db/carousel', (request, response) => Carousel.find({}).then(carousel => response.send(carousel)));
+
+app.get('/db/carousel', async (request, response) => {
+  try {
+    let carousel = {};
+    const cacheCarousel = await client.get(process.env.REDIS_CAROUSEL_KEY);
+    if (cacheCarousel) {
+      console.log('found in cache')
+      carousel = JSON.parse(cacheCarousel);
+    } else {
+      carousel = await Carousel.find({});
+      await client.set('carousel', JSON.stringify(carousel));
+    }
+    response.send(carousel);
+  } catch (error) {
+    console.error('Error while fetching /db/carousel: ', error);
+    response.status(404).send('Carousel unavailable.');
+  }
+});
+
 app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
 app.get('/version', (request, response) => response.json({ version: backendVersion }));
 
