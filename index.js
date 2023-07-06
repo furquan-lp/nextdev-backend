@@ -1,7 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const redis = require('redis');
-const promisify = require('util').promisify;
 const cors = require('cors');
 const Carousel = require('./models/carousel');
 const Portfolio = require('./models/portfolio');
@@ -12,15 +11,19 @@ const app = express();
 const cacheTime = 4 * (1000 * 3600);
 
 const client = redis.createClient({
-  password: process.env.REDIS_PASSWORD,
   socket: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT
-  }
+  },
+  password: process.env.REDIS_PASSWORD,
+  username: process.env.REDIS_USER
 });
 
-const getAsync = promisify(client.get).bind(client);
-const setAsync = promisify(client.set).bind(client);
+(async () => {
+  client.on('error', (error) => console.error(`Error : ${error}`));
+  client.on('connect', () => console.log('Redis Client Connected'));
+  await client.connect();
+})();
 
 let transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SMTP,
