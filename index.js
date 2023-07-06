@@ -25,6 +25,22 @@ const client = redis.createClient({
   await client.connect();
 })();
 
+const cacheData = (key) =>
+  async (request, response, next) => {
+    let results = {};
+    try {
+      const cacheResults = await client.get(key);
+      if (cacheResults) {
+        response.send(JSON.parse(cacheResults));
+      } else {
+        next();
+      }
+    } catch (error) {
+      console.error(error);
+      response.status(404);
+    }
+  };
+
 let transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SMTP,
   port: process.env.EMAIL_SMTP_PORT,
@@ -70,7 +86,18 @@ app.get('/db/carousel', async (request, response) => {
 });
 
 app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
-app.get('/version', (request, response) => response.json({ version: backendVersion }));
+app.get('/version', cacheData('version'), async (request, response) => {
+  try {
+    const versionData = { version: backendVersion };
+    await client.set('version', JSON.stringify(versionData), {
+      EX: 180,
+      NX: true
+    });
+    response.json({ version: backendVersion });
+  } catch (error) {
+    response.status(404).send('version unavailable.');
+  }
+});
 
 app.post('/mail/send', (request, response) => {
   let name = request.body.name,
