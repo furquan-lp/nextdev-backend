@@ -57,7 +57,10 @@ app.get('/db/carousel', async (request, response) => {
       carousel = JSON.parse(cacheCarousel);
     } else {
       carousel = await Carousel.find({});
-      await client.set('carousel', JSON.stringify(carousel));
+      await client.set('carousel', JSON.stringify(carousel), {
+        EX: 180,
+        NX: true,
+      });
     }
     response.send(carousel);
   } catch (error) {
