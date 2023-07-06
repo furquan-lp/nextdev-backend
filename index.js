@@ -68,7 +68,7 @@ app.get('/db/carousel', cacheData(process.env.REDIS_CAROUSEL_KEY), async (reques
   try {
     let carousel = {};
     carousel = await Carousel.find({});
-    await redisClient.set('carousel', JSON.stringify(carousel), {
+    await redisClient.set(process.env.REDIS_CAROUSEL_KEY, JSON.stringify(carousel), {
       EX: 180,
       NX: true,
     });
@@ -79,7 +79,20 @@ app.get('/db/carousel', cacheData(process.env.REDIS_CAROUSEL_KEY), async (reques
   }
 });
 
-app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
+app.get('/db/portfolio', cacheData(process.env.REDIS_PORTFOLIO_KEY), async (request, response) => {
+  try {
+    let portfolio = {};
+    portfolio = await Portfolio.find({});
+    await redisClient.set(process.env.REDIS_PORTFOLIO_KEY, JSON.stringify(portfolio), {
+      EX: 180,
+      NX: true,
+    });
+    response.send(portfolio);
+  } catch (error) {
+    console.error('Error while fetching /db/portfolio: ', error);
+    response.status(404).send('Portfolio unavailable');
+  }
+});
 
 app.get('/version', cacheData(process.env.REDIS_VERSION_KEY), async (request, response) => {
   try {
