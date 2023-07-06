@@ -64,20 +64,14 @@ app.get('/', (request, response) => response.sendFile('index.html', {
   maxAge: cacheTime
 }));
 
-app.get('/db/carousel', async (request, response) => {
+app.get('/db/carousel', cacheData(process.env.REDIS_CAROUSEL_KEY), async (request, response) => {
   try {
     let carousel = {};
-    const cacheCarousel = await redisClient.get(process.env.REDIS_CAROUSEL_KEY);
-    if (cacheCarousel) {
-      console.log('found in cache')
-      carousel = JSON.parse(cacheCarousel);
-    } else {
-      carousel = await Carousel.find({});
-      await redisClient.set('carousel', JSON.stringify(carousel), {
-        EX: 180,
-        NX: true,
-      });
-    }
+    carousel = await Carousel.find({});
+    await redisClient.set('carousel', JSON.stringify(carousel), {
+      EX: 180,
+      NX: true,
+    });
     response.send(carousel);
   } catch (error) {
     console.error('Error while fetching /db/carousel: ', error);
@@ -96,6 +90,7 @@ app.get('/version', cacheData(process.env.REDIS_VERSION_KEY), async (request, re
     });
     response.json({ version: backendVersion });
   } catch (error) {
+    console.error('Error while fetching /version: ', version);
     response.status(404).send('version unavailable.');
   }
 });
