@@ -10,7 +10,7 @@ const backendVersion = require('./package.json').version;
 const app = express();
 const cacheTime = 4 * (1000 * 3600);
 
-const client = redis.createClient({
+const redisClient = redis.createClient({
   socket: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT
@@ -20,16 +20,16 @@ const client = redis.createClient({
 });
 
 (async () => {
-  client.on('error', (error) => console.error(`Error : ${error}`));
-  client.on('connect', () => console.log('Redis Client Connected'));
-  await client.connect();
+  redisClient.on('error', (error) => console.error(`Error : ${error}`));
+  redisClient.on('connect', () => console.log('Redis Client Connected'));
+  await redisClient.connect();
 })();
 
 const cacheData = (key) =>
   async (request, response, next) => {
     let results = {};
     try {
-      const cacheResults = await client.get(key);
+      const cacheResults = await redisClient.get(key);
       if (cacheResults) {
         response.send(JSON.parse(cacheResults));
       } else {
@@ -67,13 +67,13 @@ app.get('/', (request, response) => response.sendFile('index.html', {
 app.get('/db/carousel', async (request, response) => {
   try {
     let carousel = {};
-    const cacheCarousel = await client.get(process.env.REDIS_CAROUSEL_KEY);
+    const cacheCarousel = await redisClient.get(process.env.REDIS_CAROUSEL_KEY);
     if (cacheCarousel) {
       console.log('found in cache')
       carousel = JSON.parse(cacheCarousel);
     } else {
       carousel = await Carousel.find({});
-      await client.set('carousel', JSON.stringify(carousel), {
+      await redisClient.set('carousel', JSON.stringify(carousel), {
         EX: 180,
         NX: true,
       });
@@ -86,10 +86,11 @@ app.get('/db/carousel', async (request, response) => {
 });
 
 app.get('/db/portfolio', (request, response) => Portfolio.find({}).then(portfolio => response.send(portfolio)));
-app.get('/version', cacheData('version'), async (request, response) => {
+
+app.get('/version', cacheData(process.env.REDIS_VERSION_KEY), async (request, response) => {
   try {
     const versionData = { version: backendVersion };
-    await client.set('version', JSON.stringify(versionData), {
+    await redisClient.set(process.env.REDIS_VERSION_KEY, JSON.stringify(versionData), {
       EX: 180,
       NX: true
     });
