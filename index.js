@@ -65,6 +65,9 @@ app.get('/', (request, response) => response.sendFile('index.html', {
   maxAge: cacheTime
 }));
 
+/**
+ * Redirect for api.nextdev.in/resume.pdf so old links don't 404
+ */
 app.get('/resume.pdf', (request, response) => {
   response.redirect('/static/resume.pdf');
 });
