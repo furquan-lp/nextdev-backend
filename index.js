@@ -6,6 +6,7 @@ const Carousel = require('./models/carousel');
 const Portfolio = require('./models/portfolio');
 require('dotenv').config();
 const backendVersion = require('./package.json').version;
+const path = require('path');
 
 const app = express();
 const cacheTime = 4 * (1000 * 3600);
@@ -55,8 +56,9 @@ transporter.verify((error, success) => {
   }
 });
 
-app.use(express.json(), express.static('public'));
+app.use(express.json());
 app.use(cors());
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (request, response) => response.sendFile('index.html', {
   root: path.join(__dirname, 'public'),
