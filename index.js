@@ -65,6 +65,10 @@ app.get('/', (request, response) => response.sendFile('index.html', {
   maxAge: cacheTime
 }));
 
+app.get('/resume.pdf', (request, response) => {
+  response.redirect('/static/resume.pdf');
+});
+
 app.get('/db/carousel', cacheData(process.env.REDIS_CAROUSEL_KEY), async (request, response) => {
   try {
     let carousel = {};
