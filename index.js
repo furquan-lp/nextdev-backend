@@ -111,7 +111,7 @@ app.get('/backend', cacheData(process.env.REDIS_VERSION_KEY), async (request, re
     });
     response.json({ version: backendVersion, backendName: process.env.BACKEND_NAME });
   } catch (error) {
-    console.error('Error while fetching /version: ', error);
+    console.error('Error while fetching /backend: ', error);
     response.status(404).send('version unavailable.');
   }
 });
