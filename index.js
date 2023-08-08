@@ -104,12 +104,12 @@ app.get('/db/portfolio', cacheData(process.env.REDIS_PORTFOLIO_KEY), async (requ
 
 app.get('/version', cacheData(process.env.REDIS_VERSION_KEY), async (request, response) => {
   try {
-    const versionData = { version: backendVersion };
+    const versionData = { version: backendVersion, backendName: process.env.BACKEND_NAME };
     await redisClient.set(process.env.REDIS_VERSION_KEY, JSON.stringify(versionData), {
       EX: 180,
       NX: true
     });
-    response.json({ version: backendVersion });
+    response.json({ version: backendVersion, backendName: process.env.BACKEND_NAME });
   } catch (error) {
     console.error('Error while fetching /version: ', error);
     response.status(404).send('version unavailable.');
