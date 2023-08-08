@@ -102,6 +102,13 @@ app.get('/db/portfolio', cacheData(process.env.REDIS_PORTFOLIO_KEY), async (requ
   }
 });
 
+/**
+ * Redirect to /backend so fetching the version the old way still functions
+ */
+app.get('/version', (request, response) => {
+  response.redirect('/backend');
+});
+
 app.get('/backend', cacheData(process.env.REDIS_VERSION_KEY), async (request, response) => {
   try {
     const backendData = { version: backendVersion, backendName: process.env.BACKEND_NAME };
