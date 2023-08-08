@@ -102,10 +102,10 @@ app.get('/db/portfolio', cacheData(process.env.REDIS_PORTFOLIO_KEY), async (requ
   }
 });
 
-app.get('/version', cacheData(process.env.REDIS_VERSION_KEY), async (request, response) => {
+app.get('/backend', cacheData(process.env.REDIS_VERSION_KEY), async (request, response) => {
   try {
-    const versionData = { version: backendVersion, backendName: process.env.BACKEND_NAME };
-    await redisClient.set(process.env.REDIS_VERSION_KEY, JSON.stringify(versionData), {
+    const backendData = { version: backendVersion, backendName: process.env.BACKEND_NAME };
+    await redisClient.set(process.env.REDIS_VERSION_KEY, JSON.stringify(backendData), {
       EX: 180,
       NX: true
     });
