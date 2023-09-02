@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const nodemailer = require('nodemailer');
 const redis = require('redis');
 const cors = require('cors');
@@ -59,6 +60,7 @@ transporter.verify((error, success) => {
 app.use(express.json());
 app.use(cors());
 app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use(compression());
 
 app.get('/', (request, response) => response.sendFile('index.html', {
   root: path.join(__dirname, 'public'),
