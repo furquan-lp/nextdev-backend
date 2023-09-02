@@ -8,7 +8,7 @@ const cert = process.env.X509_CERT;
 
 (async () => {
   await mongoose.connect(url, {
-    sslValidate: true,
+    tlsAllowInvalidCertificates: false,
     tlsCertificateKeyFile: cert,
     authMechanism: 'MONGODB-X509',
     authSource: '$external'
