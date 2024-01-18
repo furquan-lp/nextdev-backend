@@ -61,17 +61,17 @@ transporter.verify((error, success) => {
 const formatError = (errorMessage, errorLevel) => {
   let errlevelString = '';
   switch (errorLevel) {
-    case 0: errlevelString = 'INFO';
-    case 1: errlevelString = 'WARN';
-    case 2: errlevelString = 'ERROR';
-    case 3: errlevelString = 'CRITICAL';
-    case 4: errlevelString = 'FAIL';
+    case 0: errlevelString = 'INFO'; break;
+    case 1: errlevelString = 'WARN'; break;
+    case 2: errlevelString = 'ERROR'; break;
+    case 3: errlevelString = 'CRITICAL'; break;
+    case 4: errlevelString = 'FAIL'; break;
     default: errlevelString = 'NONE';
   }
   const current = new Date();
   const currentTime = `${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}.${current.getMilliseconds()}`;
-  return `${currentTime} ${errlevelString}: ${errorMessage}`
-}
+  return `${currentTime} ${errlevelString}: ${errorMessage}`;
+};
 
 app.use(express.json());
 app.use(cors());
@@ -93,16 +93,22 @@ app.get('/resume.pdf', (request, response) => {
 app.get('/:key/resume', async (request, response) => {
   const key = request.params.key;
   if (!/^[a-zA-Z]{1,15}$/.test(key)) {
-    console.error(formatError(`Bad input "${key}" was sent.`, 1))
-    response.redirect('/static/resume.pdf');
+    console.error(formatError(`Bad input "${key}" was sent.`, 1));
+    response.status(400).redirect('/static/resume.pdf');
     return;
   }
+  const filePath = path.join('public', `resume-${key}.pdf`);
   try {
-    await fsPromises.access(`public/resume-${key}.pdf`, fsPromises.R_OK);
+    await fsPromises.access(filePath, fsPromises.R_OK);
     response.redirect(`/static/resume-${key}.pdf`);
-  } catch {
-    console.error(formatError(`File public/resume-${key}.pdf not found.`, 2));
-    response.redirect('/static/resume.pdf');
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error(formatError(`File ${filePath} not found.`, 2));
+      response.status(404).redirect('/static/resume.pdf');
+    } else {
+      console.error(formatError(`Error accessing file ${filePath}.`, 3));
+      response.status(500).redirect('/static/resume.pdf');
+    }
   }
 });
 
