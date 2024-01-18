@@ -8,6 +8,7 @@ const Portfolio = require('./models/portfolio');
 require('dotenv').config();
 const backendVersion = require('./package.json').version;
 const path = require('path');
+const fsPromises = require('fs/promises');
 
 const app = express();
 const cacheTime = 4 * (1000 * 3600);
@@ -72,6 +73,17 @@ app.get('/', (request, response) => response.sendFile('index.html', {
  */
 app.get('/resume.pdf', (request, response) => {
   response.redirect('/static/resume.pdf');
+});
+
+app.get('/:key/resume', async (request, response) => {
+  const key = request.params.key;
+  try {
+    await fsPromises.access(`public/resume-${key}.pdf`, fsPromises.R_OK);
+    response.redirect(`/static/resume-${key}.pdf`);
+  } catch {
+    console.error(`File public/resume-${key}.pdf not found.`);
+    response.redirect('/static/resume.pdf');
+  }
 });
 
 app.get('/db/carousel', cacheData(process.env.REDIS_CAROUSEL_KEY), async (request, response) => {
