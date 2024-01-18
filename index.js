@@ -77,11 +77,16 @@ app.get('/resume.pdf', (request, response) => {
 
 app.get('/:key/resume', async (request, response) => {
   const key = request.params.key;
+  if (!/^[a-zA-Z]+$/.test(key)) {
+    console.error(`WARN: Bad input "${key}" was sent.`)
+    response.redirect('/static/resume.pdf');
+    return;
+  }
   try {
     await fsPromises.access(`public/resume-${key}.pdf`, fsPromises.R_OK);
     response.redirect(`/static/resume-${key}.pdf`);
   } catch {
-    console.error(`File public/resume-${key}.pdf not found.`);
+    console.error(`ERROR: File public/resume-${key}.pdf not found.`);
     response.redirect('/static/resume.pdf');
   }
 });
