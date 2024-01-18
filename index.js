@@ -75,11 +75,11 @@ const formatError = (errorMessage, errorLevel) => {
 
 app.use(express.json());
 app.use(cors());
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, process.env.PUBLIC_DIR)));
 app.use(compression());
 
 app.get('/', (request, response) => response.sendFile('index.html', {
-  root: path.join(__dirname, 'public'),
+  root: path.join(__dirname, process.env.PUBLIC_DIR),
   maxAge: cacheTime
 }));
 
@@ -97,7 +97,7 @@ app.get('/:key/resume', async (request, response) => {
     response.status(400).redirect('/static/resume.pdf');
     return;
   }
-  const filePath = path.join('public', `resume-${key}.pdf`);
+  const filePath = path.join(process.env.PUBLIC_DIR, `resume-${key}.pdf`);
   try {
     await fsPromises.access(filePath, fsPromises.R_OK);
     response.redirect(`/static/resume-${key}.pdf`);
