@@ -122,7 +122,7 @@ app.get('/db/carousel', cacheData(process.env.REDIS_CAROUSEL_KEY), async (reques
     });
     response.send(carousel);
   } catch (error) {
-    console.error('Error while fetching /db/carousel: ', error);
+    console.error(formatError(`Error while fetching /db/carousel: ${error}`, 2));
     response.status(404).send('Carousel unavailable.');
   }
 });
@@ -137,7 +137,7 @@ app.get('/db/portfolio', cacheData(process.env.REDIS_PORTFOLIO_KEY), async (requ
     });
     response.send(portfolio);
   } catch (error) {
-    console.error('Error while fetching /db/portfolio: ', error);
+    console.error(formatError(`Error while fetching /db/portfolio: ${error}`, 2));
     response.status(404).send('Portfolio unavailable');
   }
 });
@@ -158,7 +158,7 @@ app.get('/backend', cacheData(process.env.REDIS_VERSION_KEY), async (request, re
     });
     response.json({ version: backendVersion, backendName: process.env.BACKEND_NAME });
   } catch (error) {
-    console.error('Error while fetching /backend: ', error);
+    console.error(formatError(`Error while fetching /backend: ${error}`, 2));
     response.status(404).send('version unavailable.');
   }
 });
@@ -190,5 +190,5 @@ app.use(unknownEndpoint);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}.`);
+  console.log(formatError(`Server started on port ${PORT}.`, 0));
 });
