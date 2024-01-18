@@ -75,10 +75,16 @@ app.get('/resume.pdf', (request, response) => {
   response.redirect('/static/resume.pdf');
 });
 
+const logMessage = (errorMessage, errorLevel) => {
+  const current = new Date();
+  const currentTime = `${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}.${current.getMilliseconds()}`;
+  return `${currentTime} ${errorLevel.toUpperCase()}: ${errorMessage}`
+}
+
 app.get('/:key/resume', async (request, response) => {
   const key = request.params.key;
-  if (!/^[a-zA-Z]+$/.test(key)) {
-    console.error(`WARN: Bad input "${key}" was sent.`)
+  if (!/^[a-zA-Z]{1,15}$/.test(key)) {
+    console.error(logMessage(`Bad input "${key}" was sent.`, 'WARN'))
     response.redirect('/static/resume.pdf');
     return;
   }
@@ -86,7 +92,7 @@ app.get('/:key/resume', async (request, response) => {
     await fsPromises.access(`public/resume-${key}.pdf`, fsPromises.R_OK);
     response.redirect(`/static/resume-${key}.pdf`);
   } catch {
-    console.error(`ERROR: File public/resume-${key}.pdf not found.`);
+    console.error(logMessage(`File public/resume-${key}.pdf not found.`, 'ERROR'));
     response.redirect('/static/resume.pdf');
   }
 });
