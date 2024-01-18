@@ -58,6 +58,21 @@ transporter.verify((error, success) => {
   }
 });
 
+const formatError = (errorMessage, errorLevel) => {
+  let errlevelString = '';
+  switch (errorLevel) {
+    case 0: errlevelString = 'INFO';
+    case 1: errlevelString = 'WARN';
+    case 2: errlevelString = 'ERROR';
+    case 3: errlevelString = 'CRITICAL';
+    case 4: errlevelString = 'FAIL';
+    default: errlevelString = 'NONE';
+  }
+  const current = new Date();
+  const currentTime = `${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}.${current.getMilliseconds()}`;
+  return `${currentTime} ${errlevelString}: ${errorMessage}`
+}
+
 app.use(express.json());
 app.use(cors());
 app.use('/static', express.static(path.join(__dirname, 'public')));
@@ -74,21 +89,6 @@ app.get('/', (request, response) => response.sendFile('index.html', {
 app.get('/resume.pdf', (request, response) => {
   response.redirect('/static/resume.pdf');
 });
-
-const formatError = (errorMessage, errorLevel) => {
-  let errlevelString = '';
-  switch (errorLevel) {
-    case 0: errlevelString = 'INFO';
-    case 1: errlevelString = 'WARN';
-    case 2: errlevelString = 'ERROR';
-    case 3: errlevelString = 'CRITICAL';
-    case 4: errlevelString = 'FAIL';
-    default: errlevelString = 'NONE';
-  }
-  const current = new Date();
-  const currentTime = `${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}.${current.getMilliseconds()}`;
-  return `${currentTime} ${errlevelString}: ${errorMessage}`
-}
 
 app.get('/:key/resume', async (request, response) => {
   const key = request.params.key;
