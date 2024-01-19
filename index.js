@@ -90,7 +90,7 @@ app.get('/resume.pdf', (request, response) => {
   response.redirect('/static/resume.pdf');
 });
 
-app.get('/:key/resume', async (request, response) => {
+app.get('/:key/resume*', async (request, response) => {
   const key = request.params.key;
   if (!/^[a-zA-Z]{1,15}$/.test(key)) {
     console.error(formatError(`Bad input "${key}" was sent.`, 1));
